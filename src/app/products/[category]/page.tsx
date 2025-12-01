@@ -17,9 +17,38 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: CategoryPageProps) {
   const { category } = await params;
   const label = categoryLabels[category] || category;
+  const categoryUrl = `https://dankdealsmn.com/products/${category}`;
+
+  const descriptions: Record<string, string> = {
+    flower: 'Shop premium cannabis flower for same-day delivery in Minneapolis & St. Paul. Indica, sativa, and hybrid strains available.',
+    edibles: 'Browse cannabis-infused edibles including gummies, chocolates, and baked goods. Delivered same-day to your door.',
+    vapes: 'Premium cannabis vape cartridges and disposables. Fast, discreet delivery across the Twin Cities.',
+    concentrates: 'High-quality cannabis concentrates, wax, shatter, and dabs. Professional-grade products delivered same-day.',
+    prerolls: 'Ready-to-smoke pre-rolled joints. Premium flower in convenient packaging with same-day delivery.',
+    accessories: 'Cannabis accessories, pipes, papers, and more. Complete your setup with same-day delivery.',
+    topicals: 'Cannabis-infused topicals, lotions, and balms for localized relief. Delivered to your door.',
+  };
+
   return {
-    title: `${label} | DankDeals`,
-    description: `Browse our selection of premium ${label.toLowerCase()} products.`,
+    title: `${label} - Cannabis Delivery Minneapolis | DankDeals`,
+    description: descriptions[category] || `Browse our selection of premium ${label.toLowerCase()} products for same-day cannabis delivery.`,
+    alternates: {
+      canonical: categoryUrl,
+    },
+    openGraph: {
+      title: `${label} - DankDeals`,
+      description: descriptions[category] || `Premium ${label.toLowerCase()} products delivered same-day.`,
+      url: categoryUrl,
+      type: 'website',
+      images: [
+        {
+          url: `/images/products/${category}-hero.png`,
+          width: 1200,
+          height: 630,
+          alt: `${label} Cannabis Products`,
+        },
+      ],
+    },
   };
 }
 

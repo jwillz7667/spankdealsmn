@@ -29,17 +29,27 @@ export const metadata: Metadata = {
   description:
     'Same-day cannabis delivery serving Minneapolis, St. Paul, and surrounding suburbs. Premium flower, edibles, vapes, and more. Must be 21+.',
   keywords: [
-    'cannabis delivery',
-    'minneapolis cannabis',
-    'st paul weed',
-    'twin cities dispensary',
-    'same day weed delivery',
-    'minnesota cannabis',
+    'cannabis delivery minneapolis',
+    'cannabis delivery st paul',
+    'weed delivery twin cities',
+    'minnesota cannabis delivery',
+    'same day cannabis delivery',
+    'cannabis flower delivery',
+    'edibles delivery minneapolis',
+    'thc delivery mn',
+    'legal cannabis minnesota',
+    'cannabis dispensary near me',
   ],
   authors: [{ name: 'DankDeals' }],
   creator: 'DankDeals',
   publisher: 'DankDeals',
   metadataBase: new URL('https://dankdealsmn.com'),
+  alternates: {
+    canonical: '/',
+  },
+  verification: {
+    google: 'google-site-verification-code',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',

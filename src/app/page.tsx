@@ -1,10 +1,55 @@
 import { WaitlistForm } from '@/components/waitlist/waitlist-form';
 
 export default function HomePage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'DankDeals',
+    description: 'Premium cannabis delivery service in Minneapolis and St. Paul, Minnesota',
+    image: 'https://dankdealsmn.com/og-image.jpg',
+    '@id': 'https://dankdealsmn.com',
+    url: 'https://dankdealsmn.com',
+    telephone: '',
+    priceRange: '$$',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Minneapolis',
+      addressRegion: 'MN',
+      addressCountry: 'US',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 44.9778,
+      longitude: -93.2650,
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '09:00',
+      closes: '21:00',
+    },
+    servesCuisine: 'Cannabis Products',
+    areaServed: [
+      {
+        '@type': 'City',
+        name: 'Minneapolis',
+      },
+      {
+        '@type': 'City',
+        name: 'St. Paul',
+      },
+    ],
+  };
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-navy-900 via-navy-950 to-black">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(201,165,77,0.15),_transparent_45%),radial-gradient(circle_at_bottom,_rgba(201,165,77,0.08),_transparent_45%)]" />
-      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-4 py-16 text-center">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-navy-900 via-navy-950 to-black">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(201,165,77,0.15),_transparent_45%),radial-gradient(circle_at_bottom,_rgba(201,165,77,0.08),_transparent_45%)]" />
+        <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-4 py-16 text-center">
         <p className="text-gold/80 font-semibold tracking-[0.2em] uppercase">Grand Opening</p>
         <h1 className="mt-4 font-display text-4xl leading-tight text-white md:text-6xl">
           Coming Soon to the Twin Cities
@@ -26,5 +71,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
