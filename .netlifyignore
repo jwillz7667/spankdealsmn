@@ -1,0 +1,4 @@
+# Ignore files from secret scanning
+.next/cache
+.next/static
+.next/server
