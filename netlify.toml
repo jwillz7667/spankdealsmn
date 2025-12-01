@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm build"
+  command = "pnpm build && rm -rf .next/cache"
   publish = ".next"
 
 [build.environment]
