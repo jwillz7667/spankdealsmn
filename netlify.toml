@@ -5,6 +5,9 @@
 [build.environment]
   NODE_VERSION = "22"
   NPM_FLAGS = "--legacy-peer-deps"
+  NEXT_PUBLIC_SUPABASE_URL = "https://xtmktpltgfijvwvkgtql.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bWt0cGx0Z2ZpanZ3dmtndHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0OTI0NjcsImV4cCI6MjA4MDA2ODQ2N30.QxzFqArVFbzklGZyHksrVMsFOb16Oqo-ylgan43_Qc4"
+  SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bWt0cGx0Z2ZpanZ3dmtndHFsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDQ5MjQ2NywiZXhwIjoyMDgwMDY4NDY3fQ.qkmUOCv_04gl-_9E3U2QcWXa-ZDplMCORxI4yVJaIeQ"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
