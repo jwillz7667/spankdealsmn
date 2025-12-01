@@ -173,6 +173,30 @@ src/components/
 - Orders table has Realtime enabled via `ALTER PUBLICATION supabase_realtime`
 - Can subscribe to order status changes for live updates (driver/admin dashboards)
 
+### SEO & Metadata
+
+**Dynamic SEO Files:**
+- `src/app/sitemap.ts` - Auto-generates sitemap.xml from database products (revalidates hourly)
+- `src/app/robots.ts` - Robots.txt configuration (blocks /admin, /account, /api, AI crawlers)
+
+**Structured Data (JSON-LD):**
+- Homepage: LocalBusiness schema with geo coordinates, hours, service area
+- Product pages: Product schema with pricing, availability, brand info
+- Automatically generated for all product detail pages
+
+**Page Metadata:**
+- All pages have unique titles, descriptions, canonical URLs
+- OpenGraph and Twitter Card tags for social sharing
+- Category pages have SEO-optimized descriptions per product type
+- Product pages include dynamic metadata based on product data
+
+**SEO Best Practices:**
+- Keyword targeting for local cannabis delivery (Minneapolis, St. Paul, Twin Cities)
+- Mobile-optimized with proper viewport configuration
+- Security headers configured in `next.config.js`
+- Image optimization (WebP, AVIF) with proper alt text
+- See `SEO_DOCUMENTATION.md` for complete SEO implementation details
+
 ## Package Manager
 
 This project uses **pnpm** (v9.12.2). Do not use npm or yarn. The lockfile is `pnpm-lock.yaml`.
