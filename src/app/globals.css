@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 7%;
+    --foreground: 40 30% 96%;
+    --card: 222 47% 10%;
+    --card-foreground: 40 30% 96%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 40 30% 96%;
+    --primary: 43 51% 54%;
+    --primary-foreground: 222 47% 7%;
+    --secondary: 222 40% 15%;
+    --secondary-foreground: 40 30% 96%;
+    --muted: 222 40% 15%;
+    --muted-foreground: 40 15% 65%;
+    --accent: 43 51% 54%;
+    --accent-foreground: 222 47% 7%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 43 51% 54%;
+    --input: 222 40% 18%;
+    --ring: 43 51% 54%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-navy-900 text-white antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-navy-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold/50;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-gold/30 text-white;
+  }
+}
+
+@layer components {
+  /* Gold Button Styles */
+  .btn-gold {
+    @apply bg-gold text-navy-900 font-semibold py-3 px-6 rounded transition-all duration-200;
+    @apply hover:bg-gold-400 hover:shadow-lg hover:shadow-gold/20;
+    @apply active:scale-[0.98];
+  }
+
+  .btn-gold-outline {
+    @apply border-2 border-gold text-gold font-semibold py-3 px-6 rounded transition-all duration-200;
+    @apply hover:bg-gold hover:text-navy-900;
+    @apply active:scale-[0.98];
+  }
+
+  /* Card Styles */
+  .product-card {
+    @apply bg-navy-800 rounded-lg overflow-hidden transition-all duration-300;
+    @apply hover:shadow-xl hover:shadow-gold/10 hover:-translate-y-1;
+  }
+
+  /* Gold underline for nav links */
+  .nav-link {
+    @apply text-gold font-display text-lg tracking-wide transition-all duration-200;
+    @apply hover:text-gold-400;
+  }
+
+  /* Section headers */
+  .section-header {
+    @apply font-display text-2xl md:text-3xl text-gold tracking-wide uppercase;
+  }
+
+  /* Star rating */
+  .star-rating {
+    @apply flex gap-0.5 text-gold;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Focus visible styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-navy-900;
+}
