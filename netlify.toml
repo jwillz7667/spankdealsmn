@@ -6,6 +6,14 @@
   NODE_VERSION = "22"
   NPM_FLAGS = "--legacy-peer-deps"
 
+# Sensitive variable detection - suppress warnings for public env vars
+[build.processing]
+  skip_processing = false
+
+[build.processing.secrets]
+  # These are NEXT_PUBLIC_ vars - designed to be public/client-side
+  ignored_env_vars = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"]
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
