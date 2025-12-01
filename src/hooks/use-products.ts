@@ -48,7 +48,7 @@ export function useProducts(options?: {
 }
 
 export function useProduct(id: string | null) {
-  return useSWR<Product>(
+  return useSWR<Product | null>(
     id ? `/api/products/${id}` : null,
     async () => {
       if (!id) return null;

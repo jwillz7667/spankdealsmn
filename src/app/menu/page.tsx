@@ -37,7 +37,7 @@ export default async function MenuPage() {
         
         {categories.map((category) => {
           const products = productsByCategory[category];
-          if (products.length === 0) return null;
+          if (!products || products.length === 0) return null;
           
           return (
             <section key={category} className="mb-16">
