@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Bebas_Neue } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from 'sonner';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CartDrawer } from '@/components/cart';
