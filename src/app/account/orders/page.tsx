@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient, getUser } from '@/lib/supabase/server';
 import { formatCurrency, formatDateOnly, orderStatusLabels } from '@/lib/utils';
+import type { Order } from '@/types/database';
 
 export const metadata = { title: 'My Orders' };
 
@@ -11,13 +12,13 @@ export default async function OrdersPage() {
   if (!user) redirect('/login?redirect=/account/orders');
   
   const supabase = await createServerSupabaseClient();
-  const { data: orders, error } = await supabase
+  const { data, error } = await supabase
     .from('orders')
     .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  if (error) {
+  if (error || !data) {
     console.error('Failed to fetch orders:', error);
     return (
       <div className="min-h-screen bg-navy-900">
@@ -28,6 +29,8 @@ export default async function OrdersPage() {
     );
   }
 
+  const orders = data as unknown as Order[];
+
   return (
     <div className="min-h-screen bg-navy-900">
       <div className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
@@ -37,14 +40,14 @@ export default async function OrdersPage() {
         
         <h1 className="font-display text-4xl text-gold mb-8">My Orders</h1>
         
-        {orders?.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gold/70 mb-4">You haven't placed any orders yet.</p>
             <Link href="/products" className="btn-gold py-3 px-6">Start Shopping</Link>
           </div>
         ) : (
           <div className="space-y-4">
-            {orders?.map((order) => (
+            {orders.map((order) => (
               <Link
                 key={order.id}
                 href={`/orders/${order.id}`}
