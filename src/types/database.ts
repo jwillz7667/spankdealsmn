@@ -403,3 +403,124 @@ export interface CartItemWithProduct extends CartItem {
 export interface OrderWithItems extends Order {
   order_items: (OrderItem & { products: Product })[];
 }
+
+// Enterprise feature types (from migration 004)
+export interface AuditLog {
+  id: string;
+  table_name: string;
+  record_id: string;
+  action: 'INSERT' | 'UPDATE' | 'DELETE';
+  old_data: Record<string, unknown> | null;
+  new_data: Record<string, unknown> | null;
+  user_id: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
+}
+
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  status: string;
+  notes: string | null;
+  changed_by: string | null;
+  created_at: string;
+}
+
+export interface ProductReview {
+  id: string;
+  product_id: string;
+  user_id: string;
+  rating: number;
+  title: string | null;
+  content: string | null;
+  is_verified_purchase: boolean;
+  is_approved: boolean;
+  is_featured: boolean;
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavedAddress {
+  id: string;
+  user_id: string;
+  label: string;
+  street: string;
+  apt: string | null;
+  city: string;
+  state: string;
+  zip: string;
+  lat: number | null;
+  lng: number | null;
+  is_default: boolean;
+  delivery_instructions: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Favorite {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+}
+
+export interface PromoCodeUsage {
+  id: string;
+  promo_code_id: string;
+  user_id: string;
+  order_id: string | null;
+  discount_amount: number;
+  created_at: string;
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: 'order_update' | 'promotion' | 'system' | 'review_approved';
+  title: string;
+  message: string;
+  data: Record<string, unknown> | null;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface InventoryTransaction {
+  id: string;
+  product_id: string;
+  quantity_change: number;
+  previous_stock: number;
+  new_stock: number;
+  reason: 'order' | 'return' | 'adjustment' | 'restock' | 'damage' | 'expiry';
+  reference_id: string | null;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface ProductAnalytics {
+  product_id: string;
+  title: string;
+  category: ProductCategory;
+  total_orders: number;
+  total_units_sold: number;
+  total_revenue: number;
+  avg_rating: number;
+  review_count: number;
+  current_stock: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface CustomerLTV {
+  user_id: string;
+  email: string;
+  full_name: string | null;
+  customer_since: string;
+  total_orders: number;
+  lifetime_value: number;
+  avg_order_value: number;
+  last_order_date: string | null;
+  loyalty_points: number;
+}
