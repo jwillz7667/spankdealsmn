@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Send, Users, Calendar } from 'lucide-react';
-import { formatPhoneNumber } from '@/lib/twilio';
+import { formatPhoneNumber } from '@/lib/phone-utils';
 import { formatDateOnly } from '@/lib/utils';
 
 interface WaitlistEntry {
