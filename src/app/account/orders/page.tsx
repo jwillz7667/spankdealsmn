@@ -11,11 +11,22 @@ export default async function OrdersPage() {
   if (!user) redirect('/login?redirect=/account/orders');
   
   const supabase = await createServerSupabaseClient();
-  const { data: orders } = await supabase
+  const { data: orders, error } = await supabase
     .from('orders')
     .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Failed to fetch orders:', error);
+    return (
+      <div className="min-h-screen bg-navy-900">
+        <div className="mx-auto max-w-3xl px-4 py-12 lg:px-8">
+          <p className="text-red-500">Failed to load orders. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-navy-900">
