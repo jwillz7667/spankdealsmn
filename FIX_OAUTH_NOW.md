@@ -13,7 +13,7 @@ OAuth is giving "requested path is invalid" or failing silently.
 
 2. **Configure Redirect URLs**
    - Click **Authentication** → **URL Configuration**
-   - Set **Site URL**: `http://localhost:3000`
+   - Set **Site URL**: `https://dankdealsmn.com`
    - Add these **Redirect URLs** (click "+ Add URL" for each):
      ```
      http://localhost:3000/auth/callback
