@@ -106,6 +106,15 @@ export default function CheckoutPage() {
 
       await supabase.from('order_items').insert(orderItems);
 
+      // Send confirmation email (non-blocking)
+      fetch('/api/orders/confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch((err) => {
+        console.error('Failed to send confirmation email:', err);
+      });
+
       clearCart();
       toast.success('Order placed successfully!');
       router.push(`/orders/${order.id}`);
