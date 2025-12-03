@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Menu, X } from 'lucide-react';
-import { useCart } from '@/stores';
+import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
+import { useCart, useAuthStore } from '@/stores';
+import { createClient } from '@/lib/supabase/client';
 
 const navigation = [
   { name: 'SHOP', href: '/products' },
@@ -16,7 +18,16 @@ const navigation = [
 
 export function Header() {
   const { itemCount, openCart } = useCart();
+  const { user } = useAuthStore();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-navy-900 border-b-2 border-gold">
@@ -61,18 +72,39 @@ export function Header() {
 
         {/* Auth + Cart */}
         <div className="hidden lg:flex items-center gap-3">
-          <Link
-            href="/login"
-            className="btn-gold-outline py-2 px-4 text-sm"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            className="btn-gold py-2 px-4 text-sm"
-          >
-            Sign Up
-          </Link>
+          {user ? (
+            <>
+              <Link
+                href="/account"
+                className="btn-gold-outline py-2 px-4 text-sm flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                Account
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="btn-gold py-2 px-4 text-sm flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="btn-gold-outline py-2 px-4 text-sm"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="btn-gold py-2 px-4 text-sm"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
           <button
             className="relative p-2 text-gold hover:text-gold-400 transition-colors"
             onClick={openCart}
@@ -131,20 +163,45 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-2 flex flex-col gap-2">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn-gold-outline text-center py-3"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn-gold text-center py-3"
-                >
-                  Sign Up
-                </Link>
+                {user ? (
+                  <>
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn-gold-outline text-center py-3 flex items-center justify-center gap-2"
+                    >
+                      <User className="h-4 w-4" />
+                      Account
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="btn-gold text-center py-3 flex items-center justify-center gap-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn-gold-outline text-center py-3"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn-gold text-center py-3"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
