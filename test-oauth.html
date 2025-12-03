@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test OAuth - DankDeals</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .container {
+            background: #1e293b;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 30px;
+        }
+        h1 {
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #d4af37;
+            color: #0f172a;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #b8941f;
+        }
+        .output {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success {
+            color: #22c55e;
+        }
+        .error {
+            color: #ef4444;
+        }
+        .info {
+            color: #60a5fa;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        code {
+            background: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 OAuth Test Tool</h1>
+        <p>Test your Google OAuth configuration for DankDeals</p>
+
+        <div class="section">
+            <h3>Before Testing:</h3>
+            <ul>
+                <li>✅ Supabase: Enable Google provider in Authentication → Providers</li>
+                <li>✅ Supabase: Add redirect URLs in Authentication → URL Configuration</li>
+                <li>✅ Google Cloud: Add authorized redirect URIs</li>
+            </ul>
+        </div>
+
+        <button onclick="testOAuth()">🔐 Test Google OAuth</button>
+        <button onclick="checkConfig()">⚙️ Check Configuration</button>
+        <button onclick="clearOutput()">🗑️ Clear Output</button>
+
+        <div id="output" class="output">Click "Test Google OAuth" to start...</div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://xtmktpltgfijvwvkgtql.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bWt0cGx0Z2ZpanZ3dmtndHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0OTI0NjcsImV4cCI6MjA4MDA2ODQ2N30.QxzFqArVFbzklGZyHksrVMsFOb16Oqo-ylgan43_Qc4';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const output = document.getElementById('output');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = `[${timestamp}] ${message}\n`;
+            output.appendChild(span);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            output.innerHTML = '';
+            log('Output cleared', 'info');
+        }
+
+        async function checkConfig() {
+            clearOutput();
+            log('=== Checking OAuth Configuration ===', 'info');
+
+            log('✓ Supabase URL: ' + SUPABASE_URL, 'success');
+            log('✓ Anon Key: ' + SUPABASE_ANON_KEY.substring(0, 20) + '...', 'success');
+
+            const redirectUrl = `${window.location.origin}/auth/callback`;
+            log('✓ Redirect URL: ' + redirectUrl, 'success');
+
+            log('\n=== Required Configuration ===', 'info');
+            log('In Supabase Dashboard → Authentication → URL Configuration:', 'info');
+            log('  - Site URL: http://localhost:3000', 'info');
+            log('  - Redirect URLs: ' + redirectUrl, 'info');
+            log('  - Redirect URLs: http://localhost:3000/*', 'info');
+
+            log('\nIn Supabase Dashboard → Authentication → Providers:', 'info');
+            log('  - Google provider: ENABLED', 'info');
+            log('  - Client ID: 1081726449541-85jrs34e642crdh6hc4m3opljdcfh017.apps.googleusercontent.com', 'info');
+            log('  - Client Secret: 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', 'info');
+
+            log('\nIn Google Cloud Console → APIs & Credentials:', 'info');
+            log('  - Authorized redirect URI: https://xtmktpltgfijvwvkgtql.supabase.co/auth/v1/callback', 'info');
+            log('  - Authorized redirect URI: ' + redirectUrl, 'info');
+
+            log('\n=== Ready to Test ===', 'success');
+            log('Click "Test Google OAuth" to verify the setup', 'info');
+        }
+
+        async function testOAuth() {
+            clearOutput();
+            log('=== Starting OAuth Test ===', 'info');
+
+            try {
+                const redirectUrl = `${window.location.origin}/auth/callback`;
+                log('Redirect URL: ' + redirectUrl, 'info');
+
+                log('\nAttempting Google OAuth sign in...', 'info');
+
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: redirectUrl,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        }
+                    }
+                });
+
+                if (error) {
+                    log('\n❌ OAuth Error:', 'error');
+                    log(JSON.stringify(error, null, 2), 'error');
+
+                    if (error.message.includes('redirect')) {
+                        log('\n💡 Fix:', 'info');
+                        log('1. Go to Supabase Dashboard → Authentication → URL Configuration', 'info');
+                        log('2. Add redirect URL: ' + redirectUrl, 'info');
+                        log('3. Add wildcard: http://localhost:3000/*', 'info');
+                    }
+
+                    if (error.message.includes('provider')) {
+                        log('\n💡 Fix:', 'info');
+                        log('1. Go to Supabase Dashboard → Authentication → Providers', 'info');
+                        log('2. Enable Google provider', 'info');
+                        log('3. Enter Client ID and Secret from .env.local', 'info');
+                    }
+                } else {
+                    log('\n✅ OAuth request initiated successfully!', 'success');
+                    log('You should be redirected to Google sign-in...', 'success');
+                    log('\nIf not redirected, check:', 'info');
+                    log('- Browser blocked popup?', 'info');
+                    log('- Console for errors', 'info');
+
+                    if (data) {
+                        log('\nOAuth Data:', 'success');
+                        log(JSON.stringify(data, null, 2), 'success');
+                    }
+                }
+            } catch (err) {
+                log('\n❌ Unexpected Error:', 'error');
+                log(err.message, 'error');
+                log('\nStack trace:', 'error');
+                log(err.stack, 'error');
+            }
+        }
+
+        // Auto-check config on load
+        window.addEventListener('load', () => {
+            setTimeout(checkConfig, 500);
+        });
+    </script>
+</body>
+</html>
