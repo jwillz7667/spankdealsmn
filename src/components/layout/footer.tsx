@@ -88,15 +88,10 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Legal */}
           <div>
-            <h3 className="text-white font-medium mb-3">Contact</h3>
+            <h3 className="text-white font-medium mb-3">Legal</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-gold hover:text-gold-400 transition-colors">
-                  Usnt Haws
-                </Link>
-              </li>
               <li>
                 <Link href="/terms" className="text-gold hover:text-gold-400 transition-colors">
                   Terms of Service
@@ -106,6 +101,11 @@ export function Footer() {
                 <Link href="/privacy" className="text-gold hover:text-gold-400 transition-colors">
                   Privacy Policy
                 </Link>
+              </li>
+              <li>
+                <a href="tel:612-930-1390" className="text-gold hover:text-gold-400 transition-colors">
+                  612-930-1390
+                </a>
               </li>
             </ul>
           </div>

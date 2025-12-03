@@ -7,9 +7,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { loginSchema, type LoginInput } from '@/lib/validators';
+
+type AuthMethod = 'email' | 'phone';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +19,10 @@ export default function LoginPage() {
   const redirect = searchParams.get('redirect') || '/';
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
   const {
     register,
@@ -58,17 +64,94 @@ export default function LoginPage() {
   };
 
   const handleOAuthLogin = async (provider: 'google') => {
-    const supabase = createClient();
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?redirect=${redirect}`,
-      },
-    });
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
 
-    if (error) {
-      toast.error(error.message);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            redirect_to: redirect,
+          },
+        },
+      });
+
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch {
+      toast.error('Failed to sign in with Google');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePhoneSendOTP = async () => {
+    if (!phoneNumber) {
+      toast.error('Please enter a phone number');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+
+      // Format phone number to E.164 format (e.g., +1234567890)
+      const formattedPhone = phoneNumber.replace(/\D/g, '');
+      const e164Phone = formattedPhone.startsWith('1') ? `+${formattedPhone}` : `+1${formattedPhone}`;
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: e164Phone,
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      setOtpSent(true);
+      toast.success('Verification code sent to your phone!');
+    } catch {
+      toast.error('Failed to send verification code');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePhoneVerifyOTP = async () => {
+    if (!otpCode) {
+      toast.error('Please enter the verification code');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+
+      // Format phone number to E.164 format
+      const formattedPhone = phoneNumber.replace(/\D/g, '');
+      const e164Phone = formattedPhone.startsWith('1') ? `+${formattedPhone}` : `+1${formattedPhone}`;
+
+      const { error } = await supabase.auth.verifyOtp({
+        phone: e164Phone,
+        token: otpCode,
+        type: 'sms',
+      });
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      toast.success('Welcome!');
+      router.push(redirect);
+      router.refresh();
+    } catch {
+      toast.error('Failed to verify code');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,7 +175,8 @@ export default function LoginPage() {
           {/* OAuth */}
           <button
             onClick={() => handleOAuthLogin('google')}
-            className="w-full btn-gold-outline py-3 mb-6 flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full btn-gold-outline py-3 mb-6 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -120,11 +204,41 @@ export default function LoginPage() {
               <div className="w-full border-t border-gold/20" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-navy-800 px-2 text-gold/50">Or continue with</span>
+              <span className="bg-white px-2 text-gold/50">Or continue with</span>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Auth Method Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              type="button"
+              onClick={() => setAuthMethod('email')}
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
+                authMethod === 'email'
+                  ? 'bg-gold text-navy-900'
+                  : 'bg-gold/10 text-gold hover:bg-gold/20'
+              }`}
+            >
+              <Mail className="inline h-4 w-4 mr-2" />
+              Email
+            </button>
+            <button
+              type="button"
+              onClick={() => setAuthMethod('phone')}
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
+                authMethod === 'phone'
+                  ? 'bg-gold text-navy-900'
+                  : 'bg-gold/10 text-gold hover:bg-gold/20'
+              }`}
+            >
+              <Phone className="inline h-4 w-4 mr-2" />
+              Phone
+            </button>
+          </div>
+
+          {/* Email Login Form */}
+          {authMethod === 'email' && (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-gold text-sm mb-2">Email</label>
               <div className="relative">
@@ -160,14 +274,80 @@ export default function LoginPage() {
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full btn-gold py-3 text-lg disabled:opacity-50"
-            >
-              {isLoading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full btn-gold py-3 text-lg disabled:opacity-50"
+              >
+                {isLoading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+          )}
+
+          {/* Phone Login Form */}
+          {authMethod === 'phone' && (
+            <div className="space-y-4">
+              {!otpSent ? (
+                <>
+                  <div>
+                    <label className="block text-gold text-sm mb-2">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
+                      <input
+                        type="tel"
+                        placeholder="(612) 555-1234"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full bg-white border border-gold/40 rounded py-3 pl-10 pr-4 text-navy-900 placeholder:text-gold/50 focus:outline-none focus:border-gold"
+                      />
+                    </div>
+                    <p className="text-xs text-gold/60 mt-1">We'll send you a verification code</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePhoneSendOTP}
+                    disabled={isLoading}
+                    className="w-full btn-gold py-3 text-lg disabled:opacity-50"
+                  >
+                    {isLoading ? 'Sending...' : 'Send Code'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-gold text-sm mb-2">Verification Code</label>
+                    <input
+                      type="text"
+                      placeholder="Enter 6-digit code"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      maxLength={6}
+                      className="w-full bg-white border border-gold/40 rounded py-3 px-4 text-navy-900 text-center text-2xl tracking-widest placeholder:text-gold/50 focus:outline-none focus:border-gold"
+                    />
+                    <p className="text-xs text-gold/60 mt-1">Sent to {phoneNumber}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePhoneVerifyOTP}
+                    disabled={isLoading}
+                    className="w-full btn-gold py-3 text-lg disabled:opacity-50"
+                  >
+                    {isLoading ? 'Verifying...' : 'Verify & Sign In'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpSent(false);
+                      setOtpCode('');
+                    }}
+                    className="w-full text-gold/70 hover:text-gold text-sm underline"
+                  >
+                    Change phone number
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           <p className="text-center text-gold/70 mt-6">
             Don't have an account?{' '}
