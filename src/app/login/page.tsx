@@ -169,8 +169,8 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white text-navy-900 rounded-lg border border-gold/30 p-8 shadow-lg">
-          <h1 className="font-display text-3xl text-gold text-center mb-2">Welcome Back</h1>
-          <p className="text-center text-gold/70 mb-8">Sign in to your account</p>
+          <h1 className="font-display text-3xl text-black text-center mb-2">Welcome Back</h1>
+          <p className="text-center text-black/70 mb-8">Sign in to your account</p>
 
           {/* OAuth */}
           <button
@@ -240,7 +240,7 @@ export default function LoginPage() {
           {authMethod === 'email' && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-gold text-sm mb-2">Email</label>
+              <label className="block text-black text-sm mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -254,7 +254,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-gold text-sm mb-2">Password</label>
+              <label className="block text-black text-sm mb-2">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -290,7 +290,7 @@ export default function LoginPage() {
               {!otpSent ? (
                 <>
                   <div>
-                    <label className="block text-gold text-sm mb-2">Phone Number</label>
+                    <label className="block text-black text-sm mb-2">Phone Number</label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                       <input
@@ -301,7 +301,7 @@ export default function LoginPage() {
                         className="w-full bg-white border border-gold/40 rounded py-3 pl-10 pr-4 text-navy-900 placeholder:text-gold/50 focus:outline-none focus:border-gold"
                       />
                     </div>
-                    <p className="text-xs text-gold/60 mt-1">We'll send you a verification code</p>
+                    <p className="text-xs text-black/60 mt-1">We'll send you a verification code</p>
                   </div>
                   <button
                     type="button"
@@ -315,7 +315,7 @@ export default function LoginPage() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-gold text-sm mb-2">Verification Code</label>
+                    <label className="block text-black text-sm mb-2">Verification Code</label>
                     <input
                       type="text"
                       placeholder="Enter 6-digit code"
@@ -324,7 +324,7 @@ export default function LoginPage() {
                       maxLength={6}
                       className="w-full bg-white border border-gold/40 rounded py-3 px-4 text-navy-900 text-center text-2xl tracking-widest placeholder:text-gold/50 focus:outline-none focus:border-gold"
                     />
-                    <p className="text-xs text-gold/60 mt-1">Sent to {phoneNumber}</p>
+                    <p className="text-xs text-black/60 mt-1">Sent to {phoneNumber}</p>
                   </div>
                   <button
                     type="button"
@@ -349,9 +349,9 @@ export default function LoginPage() {
             </div>
           )}
 
-          <p className="text-center text-gold/70 mt-6">
+          <p className="text-center text-black/70 mt-6">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-gold hover:text-gold-400">
+            <Link href="/signup" className="text-gold hover:text-gold-400 font-semibold">
               Sign up
             </Link>
           </p>

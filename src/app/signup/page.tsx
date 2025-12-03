@@ -106,8 +106,8 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-white text-navy-900 rounded-lg border border-gold/30 p-8 shadow-lg">
-          <h1 className="font-display text-3xl text-gold text-center mb-2">Create Account</h1>
-          <p className="text-center text-gold/70 mb-8">Join DankDeals for premium cannabis delivery</p>
+          <h1 className="font-display text-3xl text-black text-center mb-2">Create Account</h1>
+          <p className="text-center text-black/70 mb-8">Join DankDeals for premium cannabis delivery</p>
 
           {/* OAuth */}
           <button
@@ -147,7 +147,7 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-gold text-sm mb-2">Full Name</label>
+              <label className="block text-black text-sm mb-2">Full Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -160,7 +160,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-gold text-sm mb-2">Email</label>
+              <label className="block text-black text-sm mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -174,7 +174,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-gold text-sm mb-2">Phone</label>
+              <label className="block text-black text-sm mb-2">Phone</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -188,7 +188,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-gold text-sm mb-2">Password</label>
+              <label className="block text-black text-sm mb-2">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -209,7 +209,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-gold text-sm mb-2">Confirm Password</label>
+              <label className="block text-black text-sm mb-2">Confirm Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gold/50" />
                 <input
@@ -229,10 +229,10 @@ export default function SignupPage() {
                 className="mt-1 h-4 w-4 rounded border-gold/30 bg-navy-700 text-gold focus:ring-gold"
                 {...register('age_verified')}
               />
-              <label htmlFor="age_verified" className="text-sm text-gold/70">
+              <label htmlFor="age_verified" className="text-sm text-black/70">
                 I confirm that I am 21 years of age or older and agree to the{' '}
-                <Link href="/terms" className="text-gold hover:text-gold-400">Terms</Link> and{' '}
-                <Link href="/privacy" className="text-gold hover:text-gold-400">Privacy Policy</Link>
+                <Link href="/terms" className="text-gold hover:text-gold-400 font-semibold">Terms</Link> and{' '}
+                <Link href="/privacy" className="text-gold hover:text-gold-400 font-semibold">Privacy Policy</Link>
               </label>
             </div>
             {errors.age_verified && <p className="text-red-500 text-xs">{errors.age_verified.message}</p>}
@@ -246,9 +246,9 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <p className="text-center text-gold/70 mt-6">
+          <p className="text-center text-black/70 mt-6">
             Already have an account?{' '}
-            <Link href="/login" className="text-gold hover:text-gold-400">Sign in</Link>
+            <Link href="/login" className="text-gold hover:text-gold-400 font-semibold">Sign in</Link>
           </p>
         </div>
       </div>
