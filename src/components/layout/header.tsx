@@ -23,10 +23,25 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push('/');
-    router.refresh();
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error('Sign out error:', error);
+        return;
+      }
+
+      // Clear auth store
+      useAuthStore.getState().setUser(null);
+      useAuthStore.getState().setProfile(null);
+
+      // Redirect to home
+      router.push('/');
+      router.refresh();
+    } catch (err) {
+      console.error('Sign out failed:', err);
+    }
   };
 
   return (
