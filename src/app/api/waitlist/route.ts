@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminSupabaseClient } from '@/lib/supabase/server';
+import { savePhoneToStorage } from '@/lib/waitlist-storage';
+import { sendSMS } from '@/lib/twilio';
 
 const waitlistSchema = z.object({
   phone: z
@@ -27,13 +29,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const phone = parsed.data.phone.trim();
+    const email = parsed.data.email;
+
+    // Save to database
     const supabase = await createAdminSupabaseClient();
     const { data: entry, error } = await supabase
       .from('waitlist_entries')
       .upsert(
         {
-          phone: parsed.data.phone.trim(),
-          email: parsed.data.email,
+          phone,
+          email,
           source: 'web',
         },
         { onConflict: 'phone' }
@@ -47,6 +53,20 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Also save to storage bucket for backup (non-blocking)
+    savePhoneToStorage(phone, email, 'web').catch((err) => {
+      console.error('Storage backup failed (non-critical):', err);
+    });
+
+    // Send thank you SMS (non-blocking)
+    sendSMS({
+      to: phone,
+      message:
+        "Thanks for joining the DankDeals waitlist! 🎉 We'll text you when we launch. Reply STOP to opt out anytime.",
+    }).catch((err) => {
+      console.error('Thank you SMS failed (non-critical):', err);
+    });
 
     return NextResponse.json({ ok: true, entry });
   } catch (error) {

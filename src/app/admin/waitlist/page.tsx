@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Send, Users, Calendar } from 'lucide-react';
+import { Send, Users, Calendar, Download, Database, FileText } from 'lucide-react';
 import { formatPhoneNumber } from '@/lib/phone-utils';
 import { formatDateOnly } from '@/lib/utils';
 
@@ -19,15 +19,25 @@ interface WaitlistStats {
   entries: WaitlistEntry[];
 }
 
+interface BackupFile {
+  name: string;
+  created_at: string;
+  size: number;
+}
+
 export default function AdminWaitlistPage() {
   const [stats, setStats] = useState<WaitlistStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
   const [selectedRecipients, setSelectedRecipients] = useState<'all' | string[]>('all');
+  const [backups, setBackups] = useState<BackupFile[]>([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     fetchWaitlist();
+    fetchBackups();
   }, []);
 
   const fetchWaitlist = async () => {
@@ -42,6 +52,73 @@ export default function AdminWaitlistPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchBackups = async () => {
+    setLoadingBackups(true);
+    try {
+      const response = await fetch('/api/admin/waitlist/export');
+      if (!response.ok) throw new Error('Failed to fetch backups');
+      const data = await response.json();
+      setBackups(data.files || []);
+    } catch (error) {
+      console.error('Failed to fetch backups:', error);
+    } finally {
+      setLoadingBackups(false);
+    }
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const response = await fetch('/api/admin/waitlist/export', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Export failed');
+      }
+
+      const data = await response.json();
+      toast.success(data.message || 'Waitlist exported successfully');
+      fetchBackups(); // Refresh the backups list
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to export waitlist');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDownload = async (fileName: string) => {
+    try {
+      const response = await fetch(`/api/admin/waitlist/download?file=${encodeURIComponent(fileName)}`);
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Download failed');
+      }
+
+      const data = await response.json();
+
+      if (data.url) {
+        // Open download URL in new tab
+        window.open(data.url, '_blank');
+        toast.success('Download started');
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to download backup');
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
   const handleSendSMS = async () => {
@@ -210,6 +287,71 @@ export default function AdminWaitlistPage() {
           <Send className="h-5 w-5" />
           {sending ? 'Sending...' : `Send to ${recipientCount} recipient(s)`}
         </button>
+      </div>
+
+      {/* Backup Management */}
+      <div className="mb-8 rounded-lg border border-gold/30 bg-navy-800 p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gold flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Storage Backups
+            </h2>
+            <p className="mt-1 text-sm text-gold/70">
+              All waitlist entries are automatically backed up to storage on signup
+            </p>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-2 rounded-lg bg-gold px-4 py-2 font-semibold text-navy-900 hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <FileText className="h-4 w-4" />
+            {exporting ? 'Exporting...' : 'Export to CSV'}
+          </button>
+        </div>
+
+        {loadingBackups ? (
+          <div className="py-8 text-center text-gold/50">Loading backups...</div>
+        ) : backups.length === 0 ? (
+          <div className="py-8 text-center text-gold/50">
+            No backups yet. Click "Export to CSV" to create one.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gold/20 text-left text-sm text-gold/70">
+                  <th className="pb-3 pr-4">File Name</th>
+                  <th className="pb-3 pr-4">Created</th>
+                  <th className="pb-3 pr-4">Size</th>
+                  <th className="pb-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {backups.map((backup) => (
+                  <tr
+                    key={backup.name}
+                    className="border-b border-gold/10 text-sm text-white/90"
+                  >
+                    <td className="py-3 pr-4 font-mono text-xs">{backup.name}</td>
+                    <td className="py-3 pr-4">{formatDateOnly(backup.created_at)}</td>
+                    <td className="py-3 pr-4">{formatFileSize(backup.size)}</td>
+                    <td className="py-3">
+                      <button
+                        onClick={() => handleDownload(backup.name)}
+                        className="flex items-center gap-1 text-gold hover:text-gold-400"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Waitlist Entries */}
