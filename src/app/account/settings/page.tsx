@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { User, Mail, Phone, Bell, Save } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/stores';
+import type { Profile } from '@/types/database';
 
 const settingsSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -55,12 +56,13 @@ export default function AccountSettingsPage() {
         if (error) throw error;
 
         if (data) {
-          setValue('full_name', data.full_name || '');
-          setValue('email', data.email || '');
-          setValue('phone', data.phone || '');
-          setValue('notification_email', data.notification_email ?? true);
-          setValue('notification_sms', data.notification_sms ?? true);
-          setValue('marketing_emails', data.marketing_emails ?? false);
+          const profile = data as Profile;
+          setValue('full_name', profile.full_name || '');
+          setValue('email', profile.email || '');
+          setValue('phone', profile.phone || '');
+          setValue('notification_email', profile.notification_email ?? true);
+          setValue('notification_sms', profile.notification_sms ?? true);
+          setValue('marketing_emails', profile.marketing_emails ?? false);
         }
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -106,7 +108,7 @@ export default function AccountSettingsPage() {
         .single();
 
       if (updatedProfile) {
-        useAuthStore.getState().setProfile(updatedProfile);
+        useAuthStore.getState().setProfile(updatedProfile as Profile);
       }
     } catch (error: any) {
       console.error('Error saving settings:', error);

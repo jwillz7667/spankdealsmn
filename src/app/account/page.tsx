@@ -2,13 +2,14 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { User, Package, MapPin, Heart, Settings, LogOut } from 'lucide-react';
 import { getUser, getUserProfile } from '@/lib/supabase/server';
+import type { Profile } from '@/types/database';
 
 export const metadata = { title: 'My Account' };
 
 export default async function AccountPage() {
   const user = await getUser();
   if (!user) redirect('/login?redirect=/account');
-  const profile = await getUserProfile();
+  const profile = (await getUserProfile()) as Profile | null;
 
   return (
     <div className="min-h-screen bg-navy-900">

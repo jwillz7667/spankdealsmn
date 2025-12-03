@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { MapPin, Plus, Edit, Trash2, Star, Save, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/stores';
+import type { SavedAddress as SavedAddressType } from '@/types/database';
 
 const addressSchema = z.object({
   label: z.string().min(1, 'Label is required'),
@@ -23,17 +24,10 @@ const addressSchema = z.object({
 
 type AddressInput = z.infer<typeof addressSchema>;
 
-interface SavedAddress extends AddressInput {
-  id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export default function SavedAddressesPage() {
   const router = useRouter();
   const { user } = useAuthStore();
-  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
+  const [addresses, setAddresses] = useState<SavedAddressType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -76,7 +70,7 @@ export default function SavedAddressesPage() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAddresses(data || []);
+      setAddresses((data as SavedAddressType[]) || []);
     } catch (error) {
       console.error('Error loading addresses:', error);
       toast.error('Failed to load addresses');
@@ -130,7 +124,7 @@ export default function SavedAddressesPage() {
     }
   };
 
-  const handleEdit = (address: SavedAddress) => {
+  const handleEdit = (address: SavedAddressType) => {
     setValue('label', address.label);
     setValue('street', address.street);
     setValue('apt', address.apt || '');
