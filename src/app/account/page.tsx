@@ -21,8 +21,12 @@ export default async function AccountPage() {
               <User className="h-8 w-8 text-gold" />
             </div>
             <div>
-              <h2 className="text-xl text-white font-semibold">{profile?.full_name || 'Guest'}</h2>
-              <p className="text-gold/70">{user.email}</p>
+              <h2 className="text-xl text-white font-semibold">
+                {profile?.full_name || user.email || profile?.phone || 'User'}
+              </h2>
+              {(user.email || profile?.phone) && (
+                <p className="text-gold/70">{user.email || profile?.phone}</p>
+              )}
             </div>
           </div>
           {profile?.loyalty_points !== undefined && (
