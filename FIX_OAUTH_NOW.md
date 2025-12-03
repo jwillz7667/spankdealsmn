@@ -46,14 +46,22 @@ OAuth is giving "requested path is invalid" or failing silently.
    - Look for Client ID: `1081726449541-85jrs34e642crdh6hc4m3opljdcfh017`
    - Click on it to edit
 
-3. **Add Authorized Redirect URIs**
+3. **Add Authorized JavaScript origins**
+   - Under "Authorized JavaScript origins", add:
+     ```
+     http://localhost:3000
+     https://dankdealsmn.com
+     ```
+
+4. **Add Authorized Redirect URIs**
    - Under "Authorized redirect URIs", add ALL of these:
      ```
      https://xtmktpltgfijvwvkgtql.supabase.co/auth/v1/callback
      http://localhost:3000/auth/callback
      https://dankdealsmn.com/auth/callback
      ```
-   - Click **Save**
+
+5. **Click Save**
 
 ### Step 3: Test It
 
